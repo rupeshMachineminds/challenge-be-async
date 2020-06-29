@@ -1,0 +1,1 @@
+Web application that has only one Servlet that calls report service to obtain message report

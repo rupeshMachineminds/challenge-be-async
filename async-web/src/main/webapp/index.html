@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Challenge</title>
+</head>
+<body>
+	<input id="weight" type="text" size="30" value="HEAVY">
+	<input type="button" value="Request" onclick="download()">
+	<script>
+		function getURI() {
+			var uri = 'reports';
+			if(document.getElementById("weight").value) {
+				console.log("Defined");
+				uri = uri + '?weight=' + document.getElementById("weight").value;
+			}
+			return uri;
+		}
+
+		function getAcceptedURI() {
+			var uri = 'consume';
+			if(document.getElementById("weight").value) {
+				console.log("Defined");
+				uri = uri + '?weight=' + document.getElementById("weight").value;
+			}
+			return uri;
+		}
+		
+		function successCallback(text) {
+			console.log('successCallback');
+			console.log(text);
+		}
+		
+		function acceptedCallback(text) {
+			var respJson = JSON.parse(text);
+			console.log('acceptedCallback: '+respJson.id);
+			var uri = 'consume?requesId='+respJson.id
+			var eventSource = new EventSource(uri); // need a way to access userId from server, then apply it here
+			
+			eventSource.onmessage = function(e){
+				console.log("Message: " + e.data);
+				if(e.data) {
+					eventSource.close();
+				}
+			};
+			
+		}
+		
+		function download() {	
+			var xmlHttp = new XMLHttpRequest();
+			xmlHttp.onreadystatechange = function() { 
+				if (xmlHttp.status == 200) {
+		            successCallback(xmlHttp.responseText);
+		        }
+				
+		        if (xmlHttp.status == 202) {
+		            acceptedCallback(xmlHttp.responseText);
+		        }
+		    }
+		    xmlHttp.open( "GET", getURI(), false ); // false for synchronous request
+		    xmlHttp.send( null );
+
+		}
+		
+	</script>
+</body>
+</html>

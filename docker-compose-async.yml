@@ -1,0 +1,23 @@
+version: "3"
+networks:
+  challenge:
+services:
+  webapp:
+    container_name: "challenge-async-web"
+    build:
+      context: ./async-web
+    ports:
+      - "8080:8080"
+      - "8787:8787"
+    networks:
+      - challenge
+    depends_on:
+      - service
+  service:
+    container_name: "challenge-async-service"
+    build:
+      context: ./async-service
+    ports:
+      - "8788:8787"
+    networks:
+      - challenge
